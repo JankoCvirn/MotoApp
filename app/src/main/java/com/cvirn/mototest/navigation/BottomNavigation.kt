@@ -10,8 +10,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.cvirn.mototest.component.createGradientBrush
-import com.cvirn.mototest.ui.theme.startGradient
 
 @Composable
 fun BottomNavigation(navController: NavController) {
@@ -38,7 +36,7 @@ fun BottomNavigation(navController: NavController) {
                     )
                 },
                 alwaysShowLabel = false,
-                selectedContentColor = startGradient,
+                selectedContentColor = Color.Red,
                 unselectedContentColor = Color.White,
                 selected = currentRoute == item.screen_route,
                 onClick = {

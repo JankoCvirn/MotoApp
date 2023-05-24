@@ -1,0 +1,37 @@
+query Mobjects {
+ mobjects {
+   id
+   type
+   author {
+     id
+     first_name
+     last_name
+     avatar {
+       id
+       downloadUrl
+     }
+   }
+   title
+   listing
+   photo {
+     id
+     downloadUrl
+   }
+   description
+   country {
+     id
+     nicename
+   }
+   city
+   address
+   lat
+   lng
+   phone
+   publicEmail
+   website
+   workingHours
+   rating
+   createdAt
+   updatedAt
+ }
+}

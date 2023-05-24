@@ -12,3 +12,6 @@ val Pink40 = Color(0xFF7D5260)
 
 val startGradient = Color(0xFF2A1C38)
 val endGradient = Color(0xFF130522)
+val orange = Color(0xFFFC692B)
+val grey = Color(0xFF9283A0)
+val searchGrey = Color(0x3D767860)

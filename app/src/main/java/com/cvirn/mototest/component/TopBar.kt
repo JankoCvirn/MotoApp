@@ -11,10 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.cvirn.mototest.R
 
 @Composable
@@ -33,7 +35,7 @@ fun TopBar(
                 top.linkTo(parent.top)
                 bottom.linkTo(parent.bottom)
                 start.linkTo(parent.start)
-            }.padding(start = 16.dp),
+            }.padding(start = 8.dp),
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(
@@ -50,8 +52,11 @@ fun TopBar(
                 top.linkTo(parent.top)
                 bottom.linkTo(parent.bottom)
                 start.linkTo(icBack.end)
-            }.padding(start = 37.dp),
-            fontSize = 24.sp,
+                end.linkTo(icAdd.start)
+                width = Dimension.fillToConstraints
+            }.padding(start = 24.dp),
+            textAlign = TextAlign.Start,
+            fontSize = 20.sp,
             color = Color.White,
         )
 

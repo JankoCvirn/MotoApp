@@ -42,7 +42,10 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Scaffold(
                     topBar = {
-                        TopBar(onBack = { }, title = "Services")
+                        TopBar(
+                            onBack = { },
+                            title = "Services",
+                        )
                     },
                     bottomBar = { BottomNavigation(navController = navController) },
 
@@ -55,7 +58,8 @@ class MainActivity : ComponentActivity() {
                                     colors = listOf(startGradient, endGradient),
                                     isVertical = true,
                                 ),
-                            ).padding(8.dp),
+                            )
+                            .padding(start = 8.dp, top = 48.dp, end = 8.dp, bottom = 8.dp),
                         contentAlignment = Alignment.Center,
                     ) {
                         NavigationGraph(navController = navController)

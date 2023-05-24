@@ -1,0 +1,119 @@
+interface Timestamps {
+  createdAt: Date!
+  updatedAt: Date!
+}
+type Country implements Timestamps {
+  id: ID!
+  iso: String!
+  name: String!
+  nicename: String!
+  iso3: String
+  numcode: Int
+  phonecode: Int
+  localization: String
+  createdAt: Date!
+  updatedAt: Date!
+}
+type Image implements Timestamps {
+  id: ID!
+  filename: String
+  extension: String
+  size: Int
+  downloadUrl: String!
+  createdAt: Date!
+  updatedAt: Date!
+}
+scalar Date
+type Query {
+  countries: [Country]!
+  country(id: ID!): Country
+  mobjects(filter: Filter): [Mobject]!
+  mobject(id: ID!): Mobject
+  users(filter: Filter): [User]!
+  user(id: ID!): User
+  images: [Image]!
+  image(id: String!): Image
+}
+type Mutation {
+  createMobject(newMobject: MobjectCreateInput!): Mobject!
+}
+type Mobject implements Timestamps {
+  id: ID!
+  type: Int!
+  author: User!
+  title: String!
+  listing: Int!
+  photo: Image!
+  description: String!
+  country: Country!
+  city: String!
+  address: String!
+  lat: Float!
+  lng: Float!
+  phone: String
+  publicEmail: String
+  website: String
+  workingHours: String
+  rating: Float
+  createdAt: Date!
+  updatedAt: Date!
+}
+input MobjectCreateInput {
+  type: Int!
+  title: String!
+  listing: Int!
+  photo: String!
+  description: String!
+  country: Int!
+  city: String!
+  address: String!
+  lat: Float!
+  lng: Float!
+  phone: String
+  publicEmail: String
+  website: String
+  workingHours: String
+  rating: Float
+}
+type User implements Timestamps {
+  id: ID!
+  email: String!
+  avatar: Image!
+  points: Int!
+  first_name: String!
+  last_name: String
+  dob: Date
+  gender: Int
+  phone: String
+  publicEmail: String
+  country: Country
+  city: String
+  about_me: String
+  tracking: Boolean
+  visibility: Int
+  lat: Float
+  lng: Float
+  is_activated: Boolean
+  accountLevel: Int
+  localization: String
+  verification_code: Int
+  friendshipStatus: Int
+  ready_to_meet: Boolean
+  notification_radius: Float
+  method: String
+  google_id: ID
+  articles: [Article]
+  bookmarks: [Bookmark]
+  friendCount: Int
+  followerCount: Int
+  distance: Int
+  isBlocked: Boolean
+  reasonForBlocking: ReasonForBlocking
+  personalCorrespondenceId: ID
+  createdAt: Date!
+  updatedAt: Date!
+}
+input Filter {
+  friends: Boolean
+  followers: Boolean
+}
