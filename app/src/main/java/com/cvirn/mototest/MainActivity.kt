@@ -15,15 +15,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.cvirn.mototest.component.TopBar
 import com.cvirn.mototest.component.createGradientBrush
 import com.cvirn.mototest.navigation.BottomNavItem
 import com.cvirn.mototest.navigation.BottomNavigation
 import com.cvirn.mototest.screen.BikerScreen
 import com.cvirn.mototest.screen.ChatScreen
+import com.cvirn.mototest.screen.DetailsScreen
 import com.cvirn.mototest.screen.HomeScreen
 import com.cvirn.mototest.screen.MapScreen
 import com.cvirn.mototest.screen.MenuScreen
@@ -43,8 +46,9 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     topBar = {
                         TopBar(
-                            onBack = { },
+                            onBack = {},
                             title = "Services",
+                            navControler = navController
                         )
                     },
                     bottomBar = { BottomNavigation(navController = navController) },
@@ -59,7 +63,7 @@ class MainActivity : ComponentActivity() {
                                     isVertical = true,
                                 ),
                             )
-                            .padding(start = 8.dp, top = 48.dp, end = 8.dp, bottom = 8.dp),
+                            .padding(start = 8.dp, top = 48.dp, end = 8.dp, bottom = 48.dp),
                         contentAlignment = Alignment.Center,
                     ) {
                         NavigationGraph(navController = navController)
@@ -74,7 +78,7 @@ class MainActivity : ComponentActivity() {
 fun NavigationGraph(navController: NavHostController) {
     NavHost(navController, startDestination = BottomNavItem.Home.screen_route) {
         composable(BottomNavItem.Home.screen_route) {
-            HomeScreen()
+            HomeScreen(modifier = Modifier, navController = navController)
         }
         composable(BottomNavItem.Chat.screen_route) {
             ChatScreen()
@@ -87,6 +91,16 @@ fun NavigationGraph(navController: NavHostController) {
         }
         composable(BottomNavItem.Menu.screen_route) {
             MenuScreen()
+        }
+        composable(
+            "details/{id}",
+            arguments = listOf(
+                navArgument("id") {
+                    type = NavType.StringType
+                },
+            ),
+        ) {
+            DetailsScreen(navController = navController, it.arguments?.getString("id"))
         }
     }
 }

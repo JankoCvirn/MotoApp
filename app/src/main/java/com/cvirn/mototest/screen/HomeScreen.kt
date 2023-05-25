@@ -21,11 +21,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.navigation.NavController
 import com.cvirn.mototest.component.ServiceItem
 import com.cvirn.mototest.ui.theme.searchGrey
 import com.cvirn.mototest.viewModel.ServicesViewModel
@@ -33,7 +33,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
     val viewModel = koinViewModel<ServicesViewModel>()
     ConstraintLayout(modifier.fillMaxSize()) {
         val (searchBar, row, column) = createRefs()
@@ -81,14 +81,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             item {
             }
             items(items = list, itemContent = { item ->
-                item?.let { ServiceItem(item = it) }
+                item?.let { ServiceItem(item = it, navController) }
             })
         }
     }
-}
-
-@Preview
-@Composable
-fun PreviewHomeScreen() {
-    HomeScreen(Modifier)
 }

@@ -9,4 +9,5 @@ sealed class BottomNavItem(var title: String, var icon: Int, var screen_route: S
     object Biker : BottomNavItem("Biker", R.drawable.ic_biker, "biker")
     object Map : BottomNavItem("Map", R.drawable.ic_maps, "map")
     object Menu : BottomNavItem("Menu", R.drawable.ic_menu, "menu")
+    object Details : BottomNavItem("Details", R.drawable.ic_biker, "details")
 }

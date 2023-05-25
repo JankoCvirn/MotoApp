@@ -1,6 +1,8 @@
 package com.cvirn.mototest.component
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -8,10 +10,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -21,20 +28,23 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.cvirn.mototest.R
 import com.cvirn.mototest.ui.theme.grey
 import com.cvirn.mototest.ui.theme.orange
+import com.cvirn.mototest.ui.theme.startGradient
 import com.example.rocketreserver.MobjectsQuery
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ServiceItem(item: MobjectsQuery.Mobject) {
+fun ServiceItem(item: MobjectsQuery.Mobject, navController: NavController) {
+    val context = LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -44,19 +54,26 @@ fun ServiceItem(item: MobjectsQuery.Mobject) {
         elevation = 0.dp,
     ) {
         ConstraintLayout(Modifier.fillMaxSize()) {
-            val (photo, title, description, arrow, address, rate, listing) = createRefs()
+            val (photo, title, description, arrow, address, rate, listing, ratings) = createRefs()
 
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(item.photo.downloadUrl)
                     .crossfade(true)
                     .build(),
-                contentDescription = "default crossfade example",
-                modifier = Modifier.constrainAs(photo) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                }.width(48.dp).height(48.dp).clip(CircleShape),
+                contentDescription = "",
+                modifier = Modifier
+                    .constrainAs(photo) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                    }
+                    .width(48.dp)
+                    .height(48.dp)
+                    .clip(CircleShape)
+                    .clickable {
+                        navController.navigate("details/${item.id}")
+                    },
                 placeholder = painterResource(R.drawable.placeholder),
                 contentScale = ContentScale.Crop,
             )
@@ -70,6 +87,9 @@ fun ServiceItem(item: MobjectsQuery.Mobject) {
                         bottom.linkTo(description.top)
                         end.linkTo(rate.start)
                         width = Dimension.fillToConstraints
+                    }
+                    .clickable {
+                        navController.navigate("details/${item.id}")
                     },
                 color = Color.White,
                 fontWeight = FontWeight(700),
@@ -87,7 +107,8 @@ fun ServiceItem(item: MobjectsQuery.Mobject) {
                         start.linkTo(title.start)
                         bottom.linkTo(parent.bottom)
                         end.linkTo(arrow.start)
-                    }.width(96.dp),
+                    }
+                    .width(96.dp),
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 fontSize = 14.sp,
@@ -96,12 +117,16 @@ fun ServiceItem(item: MobjectsQuery.Mobject) {
             Image(
                 imageVector = ImageVector.vectorResource(R.drawable.angles_right_solid),
                 contentDescription = "",
-                modifier = Modifier.constrainAs(arrow) {
-                    top.linkTo(description.top)
-                    start.linkTo(description.end)
-                    bottom.linkTo(description.bottom)
-                    end.linkTo(address.start)
-                }.width(12.dp).height(6.dp).padding(start = 0.dp, end = 0.dp, top = 2.dp),
+                modifier = Modifier
+                    .constrainAs(arrow) {
+                        top.linkTo(description.top)
+                        start.linkTo(description.end)
+                        bottom.linkTo(description.bottom)
+                        end.linkTo(address.start)
+                    }
+                    .width(12.dp)
+                    .height(6.dp)
+                    .padding(start = 0.dp, end = 0.dp, top = 2.dp),
             )
             Text(
                 text = "${item.city}, ${item.country.nicename}",
@@ -124,7 +149,8 @@ fun ServiceItem(item: MobjectsQuery.Mobject) {
                     .constrainAs(rate) {
                         top.linkTo(title.top)
                         end.linkTo(listing.start)
-                    }.padding(end = 4.dp),
+                    }
+                    .padding(end = 4.dp, top = 4.dp),
                 fontSize = 14.sp,
                 color = orange,
                 fontWeight = FontWeight(700),
@@ -135,53 +161,68 @@ fun ServiceItem(item: MobjectsQuery.Mobject) {
                     .constrainAs(listing) {
                         top.linkTo(rate.top)
                         end.linkTo(parent.end)
-                    }.padding(end = 2.dp),
+                    }
+                    .padding(end = 2.dp, top = 4.dp, start = 4.dp),
                 fontSize = 14.sp,
                 color = grey,
                 fontWeight = FontWeight(700),
             )
+            Canvas(
+                modifier = Modifier
+                    .constrainAs(ratings) {
+                        end.linkTo(parent.end)
+                        start.linkTo(address.end)
+                        bottom.linkTo(parent.bottom)
+                        top.linkTo(rate.bottom)
+                        height = Dimension.fillToConstraints
+                        width = Dimension.fillToConstraints
+                    }
+                    .padding(top = 8.dp, start = 32.dp, end = 2.dp),
+            ) {
+                drawRoundRect(
+                    brush = createBrush(1, item.rating ?: 0.0),
+                    size = Size(width = 10.dp.toPx(), height = 10.dp.toPx()),
+                    cornerRadius = CornerRadius(x = 2.dp.toPx(), 2.dp.toPx()),
+                )
+                drawRoundRect(
+                    brush = createBrush(2, item.rating ?: 0.0),
+                    size = Size(width = 10.dp.toPx(), height = 10.dp.toPx()),
+                    cornerRadius = CornerRadius(x = 2.dp.toPx(), 2.dp.toPx()),
+                    topLeft = Offset(x = 14.dp.toPx(), y = 0.dp.toPx()),
+                )
+                drawRoundRect(
+                    brush = createBrush(3, item.rating ?: 0.0),
+                    size = Size(width = 10.dp.toPx(), height = 10.dp.toPx()),
+                    cornerRadius = CornerRadius(x = 2.dp.toPx(), 2.dp.toPx()),
+                    topLeft = Offset(x = 28.dp.toPx(), y = 0.dp.toPx()),
+                )
+                drawRoundRect(
+                    brush = createBrush(4, item.rating ?: 0.0),
+                    size = Size(width = 10.dp.toPx(), height = 10.dp.toPx()),
+                    cornerRadius = CornerRadius(x = 2.dp.toPx(), 2.dp.toPx()),
+                    topLeft = Offset(x = 42.dp.toPx(), y = 0.dp.toPx()),
+                )
+                drawRoundRect(
+                    brush = createBrush(5, item.rating ?: 0.0),
+                    size = Size(width = 10.dp.toPx(), height = 10.dp.toPx()),
+                    cornerRadius = CornerRadius(x = 2.dp.toPx(), 2.dp.toPx()),
+                    topLeft = Offset(x = 56.dp.toPx(), y = 0.dp.toPx()),
+                )
+            }
         }
     }
 }
 
-@Preview
-@Composable
-fun PrevieServiceItem() {
-    ServiceItem(
-        item = MobjectsQuery.Mobject(
-            id = "2",
-            type = 2,
-            rating = 4.7,
-            title = "Jacomoto Racing Team",
-            description = "Repair shop",
-            address = "adress",
-            city = "Madrid",
-            listing = 2,
-            phone = "89898989",
-            publicEmail = "jacomoto@gmail.com",
-            website = "www.jacomoto.com",
-            workingHours = "Monday 12-24",
-            createdAt = "31.12.2023",
-            lat = 40.45,
-            lng = -3.7,
-            updatedAt = "31.12.2023",
-            photo = MobjectsQuery.Photo(
-                id = "32270ad5-778f-4e54-b213-6d86b0ec623c",
-                downloadUrl = "https://cryptomoto-images.s3.eu-west-3.amazonaws.com/b4344e89-8e65-46ba-8d2b-e1daf81b71ae.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIA2TY2HEXFNWVGTCXZ%2F20230524%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20230524T102320Z&X-Amz-Expires=3600&X-Amz-Signature=5585b55766a3c8aecc4c2072d3f0fe2b552e308a9f40e5f4b0631828e3703d3c&X-Amz-SignedHeaders=host&x-id=GetObject",
-            ),
-            country = MobjectsQuery.Country(
-                id = "199",
-                nicename = "Spain",
-            ),
-            author = MobjectsQuery.Author(
-                id = "2",
-                first_name = "Yulia",
-                last_name = "Aleynikova",
-                avatar = MobjectsQuery.Avatar(
-                    id = "b4344e89-8e65-46ba-8d2b-e1daf81b71ae",
-                    downloadUrl = "https://cryptomoto-images.s3.eu-west-3.amazonaws.com/b4344e89-8e65-46ba-8d2b-e1daf81b71ae.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIA2TY2HEXFNWVGTCXZ%2F20230523%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20230523T142320Z&X-Amz-Expires=3600&X-Amz-Signature=04ea4e750025da6be4725e07dd1b37e0748cc0aea51ffe77f839548695546907&X-Amz-SignedHeaders=host&x-id=GetObject",
-                ),
-            ),
-        ),
-    )
+private fun createBrush(value: Int, rate: Double): Brush {
+    return if (rate > value) {
+        Brush.horizontalGradient(colors = listOf(orange, orange))
+    } else {
+        Brush.horizontalGradient(
+            0.0f to orange,
+            (value - rate).toFloat() + 0.25f to orange,
+            1.0f to startGradient,
+            startX = 0f,
+            endX = Float.POSITIVE_INFINITY,
+        )
+    }
 }
